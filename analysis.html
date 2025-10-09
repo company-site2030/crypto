@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تحليلات السوق | كربتو الخليج</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="icon" href="./assets/logo.svg" />
+</head>
+
+<body class="bg-gray-950 text-white min-h-screen">
+  <!-- ✅ شريط علوي -->
+  <nav class="bg-gray-900 p-4 flex justify-between items-center">
+    <div class="flex items-center gap-3">
+      <img src="./assets/logo.svg" class="w-10" alt="logo">
+      <h1 class="text-xl font-bold text-yellow-400">كربتو الخليج</h1>
+    </div>
+    <div>
+      <a href="dashboard.html" class="text-gray-300 hover:text-yellow-400 mx-2">الداشبورد</a>
+      <a href="settings.html" class="text-gray-300 hover:text-yellow-400 mx-2">الإعدادات</a>
+    </div>
+  </nav>
+
+  <!-- ✅ محتوى الصفحة -->
+  <main class="p-6">
+    <h2 class="text-2xl font-bold mb-6 text-yellow-400">تحليل السوق</h2>
+
+    <div class="bg-gray-900 p-6 rounded-2xl shadow">
+      <h3 class="text-lg font-semibold mb-4 text-yellow-400">سعر البيتكوين خلال 7 أيام</h3>
+      <canvas id="btcChart" height="100"></canvas>
+    </div>
+  </main>
+
+  <script type="module">
+    async function loadBTCChart() {
+      try {
+        const res = await fetch("https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7");
+        const data = await res.json();
+        const prices = data.prices.map(p => p[1]);
+        const labels = data.prices.map((p, i) => `اليوم ${i+1}`);
+
+        const ctx = document.getElementById("btcChart");
+        new Chart(ctx, {
+          type: "line",
+          data: {
+            labels,
+            datasets: [{
+              label: "BTC/USD",
+              data: prices,
+              borderColor: "rgb(250,204,21)",
+              backgroundColor: "rgba(250,204,21,0.2)",
+              fill: true,
+              tension: 0.4
+            }]
+          },
+          options: {
+            plugins: { legend: { labels: { color: "white" } } },
+            scales: {
+              x: { ticks: { color: "#aaa" } },
+              y: { ticks: { color: "#aaa" } }
+            }
+          }
+        });
+      } catch (err) {
+        console.error("فشل في تحميل بيانات البيتكوين:", err);
+      }
+    }
+    loadBTCChart();
+  </script>
+</body>
+</html>
