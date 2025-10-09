@@ -3,55 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>لوحة التحكم - كربتو الخليج</title>
+  <title>لوحة التحكم - كربتو الخليج 💰</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script type="module" src="js/dashboard.js"></script>
-  <link
-    href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
-    rel="stylesheet"
-  />
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
   <!-- شريط علوي -->
   <nav class="bg-blue-700 text-white px-6 py-3 flex justify-between items-center shadow-md">
-    <h1 class="text-xl font-bold">💰 كربتو الخليج</h1>
-    <div class="flex items-center gap-4">
-      <span id="userName" class="font-semibold"></span>
-      <a href="settings.html" class="bg-yellow-400 text-black px-3 py-1 rounded-lg hover:bg-yellow-500 transition">⚙️ الإعدادات</a>
+    <h1 class="text-xl font-bold">كربتو الخليج 💰</h1>
+    <div class="flex items-center gap-3">
+      <a href="settings.html" class="bg-gray-200 text-blue-700 px-3 py-1 rounded-lg hover:bg-gray-300">⚙️ الإعدادات</a>
       <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 px-4 py-1 rounded-lg">تسجيل الخروج</button>
     </div>
   </nav>
 
   <!-- المحتوى -->
-  <div class="max-w-5xl mx-auto mt-8 p-6 bg-white rounded-2xl shadow-lg">
-    <h2 class="text-2xl font-bold mb-6 text-center text-blue-700">لوحة تداول العملات الرقمية</h2>
+  <main class="flex-1 p-6">
+    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6">
+      <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">لوحة التحكم</h2>
 
-    <!-- جدول العملات -->
-    <div class="overflow-x-auto">
-      <table class="w-full border text-center rounded-lg overflow-hidden">
-        <thead class="bg-gray-100">
-          <tr>
-            <th class="p-3 border">العملة</th>
-            <th class="p-3 border">السعر (USD)</th>
-            <th class="p-3 border">التغير (24 س)</th>
-            <th class="p-3 border">القيمة السوقية</th>
-          </tr>
-        </thead>
-        <tbody id="cryptoTable"></tbody>
-      </table>
-    </div>
+      <!-- الرصيد -->
+      <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 text-center">
+        <h3 class="text-lg font-semibold mb-2">الرصيد الحالي</h3>
+        <p id="balance" class="text-3xl font-bold text-green-600">0 USDT</p>
+      </div>
 
-    <!-- رسم بياني -->
-    <div class="mt-10">
-      <h3 class="text-lg font-semibold mb-3 text-gray-700">📈 سعر البيتكوين خلال الأيام الأخيرة</h3>
-      <canvas id="btcChart" width="400" height="150"></canvas>
+      <!-- عمليات مالية -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="bg-gray-50 border p-4 rounded-xl">
+          <h3 class="font-semibold mb-2 text-center">💵 إيداع</h3>
+          <input id="depositAmount" type="number" placeholder="المبلغ بالإيـسـدي تي" class="w-full border rounded p-2 mb-2">
+          <button id="depositBtn" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded">طلب إيداع</button>
+        </div>
+
+        <div class="bg-gray-50 border p-4 rounded-xl">
+          <h3 class="font-semibold mb-2 text-center">💸 سحب</h3>
+          <input id="withdrawAmount" type="number" placeholder="المبلغ بالإيـسـدي تي" class="w-full border rounded p-2 mb-2">
+          <button id="withdrawBtn" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded">طلب سحب</button>
+        </div>
+      </div>
+
+      <!-- سجل العمليات -->
+      <div>
+        <h3 class="text-lg font-semibold mb-3 text-center">📜 آخر العمليات</h3>
+        <div id="transactionsList" class="space-y-2 max-h-64 overflow-y-auto"></div>
+      </div>
     </div>
-  </div>
+  </main>
 
   <footer class="text-center py-6 text-gray-500 mt-10">
     © 2025 كربتو الخليج - جميع الحقوق محفوظة
   </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
