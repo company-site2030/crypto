@@ -3,151 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لوحة التحكم | كربتو الخليج</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="icon" href="./assets/logo.svg" />
+  <title>لوحة التحكم - كربتو الخليج</title>
+  <script type="module" src="js/dashboard.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
+<body class="bg-gray-50 min-h-screen">
 
-<body class="bg-gray-950 text-white min-h-screen">
-  <!-- ✅ شريط علوي -->
-  <nav class="bg-gray-900 p-4 flex justify-between items-center">
-    <div class="flex items-center gap-3">
-      <img src="./assets/logo.svg" class="w-10" alt="logo">
-      <h1 class="text-xl font-bold text-yellow-400">كربتو الخليج</h1>
-    </div>
-    <div>
-      <button id="logoutBtn" class="bg-yellow-500 hover:bg-yellow-600 text-black px-4 py-2 rounded-lg font-semibold">تسجيل الخروج</button>
+  <!-- الشريط العلوي -->
+  <nav class="bg-blue-700 text-white px-6 py-3 flex justify-between items-center shadow-md">
+    <h1 class="text-xl font-bold">كربتو الخليج 💰</h1>
+    <div class="flex items-center space-x-4">
+      <span id="userName" class="font-semibold"></span>
+      <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 px-4 py-1 rounded-lg">تسجيل الخروج</button>
     </div>
   </nav>
 
-  <!-- ✅ المحتوى -->
-  <main class="p-6">
-    <h2 class="text-2xl font-bold mb-6 text-yellow-400">لوحة التداول</h2>
+  <!-- المحتوى -->
+  <div class="max-w-5xl mx-auto mt-8 p-6 bg-white rounded-2xl shadow-lg">
 
-    <!-- ✅ معلومات الحساب -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div class="bg-gray-900 p-5 rounded-2xl text-center shadow">
-        <h3 class="text-gray-400 mb-2">إجمالي الرصيد</h3>
-        <p id="totalBalance" class="text-3xl font-bold text-green-400">$0</p>
-      </div>
-      <div class="bg-gray-900 p-5 rounded-2xl text-center shadow">
-        <h3 class="text-gray-400 mb-2">عدد العملات</h3>
-        <p id="totalCoins" class="text-3xl font-bold">0</p>
-      </div>
-      <div class="bg-gray-900 p-5 rounded-2xl text-center shadow">
-        <h3 class="text-gray-400 mb-2">أعلى أداء</h3>
-        <p id="bestCoin" class="text-2xl font-bold text-yellow-400">-</p>
-      </div>
+    <h2 class="text-2xl font-bold mb-6 text-center">لوحة تداول العملات الرقمية</h2>
+
+    <!-- جدول العملات -->
+    <table class="w-full border text-center">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="p-3 border">العملة</th>
+          <th class="p-3 border">السعر (USD)</th>
+          <th class="p-3 border">التغير 24 ساعة</th>
+          <th class="p-3 border">القيمة السوقية</th>
+        </tr>
+      </thead>
+      <tbody id="cryptoTable"></tbody>
+    </table>
+
+    <!-- رسم بياني -->
+    <div class="mt-10">
+      <h3 class="text-lg font-semibold mb-3">سعر البيتكوين خلال الأيام الأخيرة</h3>
+      <canvas id="btcChart" width="400" height="150"></canvas>
     </div>
+  </div>
 
-    <!-- ✅ جدول العملات -->
-    <div class="bg-gray-900 p-5 rounded-2xl shadow mb-8">
-      <h3 class="text-xl font-bold mb-4 text-yellow-400">أسعار العملات الرقمية</h3>
-      <table class="w-full text-center">
-        <thead class="text-gray-400 border-b border-gray-700">
-          <tr>
-            <th class="p-2">العملة</th>
-            <th class="p-2">السعر (USD)</th>
-            <th class="p-2">التغير 24H</th>
-          </tr>
-        </thead>
-        <tbody id="cryptoTable" class="text-gray-300"></tbody>
-      </table>
-    </div>
+  <footer class="text-center py-6 text-gray-500 mt-10">
+    © 2025 كربتو الخليج - جميع الحقوق محفوظة
+  </footer>
 
-    <!-- ✅ رسم بياني -->
-    <div class="bg-gray-900 p-5 rounded-2xl shadow">
-      <h3 class="text-xl font-bold mb-4 text-yellow-400">أداء السوق</h3>
-      <canvas id="marketChart" height="100"></canvas>
-    </div>
-  </main>
-
-  <!-- ✅ سكريبت -->
-  <script type="module">
-    import { auth } from './js/firebase-config.js';
-    import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-    const logoutBtn = document.getElementById("logoutBtn");
-    const cryptoTable = document.getElementById("cryptoTable");
-    const totalBalance = document.getElementById("totalBalance");
-    const totalCoins = document.getElementById("totalCoins");
-    const bestCoin = document.getElementById("bestCoin");
-
-    // تحقق من المستخدم
-    onAuthStateChanged(auth, (user) => {
-      if (!user) {
-        window.location.href = "login.html";
-      }
-    });
-
-    // تسجيل الخروج
-    logoutBtn.addEventListener("click", async () => {
-      await signOut(auth);
-      window.location.href = "login.html";
-    });
-
-    // جلب بيانات CoinGecko
-    async function loadCryptoData() {
-      try {
-        const res = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,binancecoin,solana,cardano,xrp,polkadot,dogecoin");
-        const data = await res.json();
-
-        let total = 0;
-        let topCoin = { name: "", change: -Infinity };
-
-        cryptoTable.innerHTML = "";
-
-        data.forEach(c => {
-          total += c.current_price;
-          if (c.price_change_percentage_24h > topCoin.change) {
-            topCoin = { name: c.name, change: c.price_change_percentage_24h };
-          }
-
-          const row = `
-            <tr class="border-b border-gray-800">
-              <td class="py-2">${c.name}</td>
-              <td class="py-2">$${c.current_price.toLocaleString()}</td>
-              <td class="py-2 ${c.price_change_percentage_24h >= 0 ? 'text-green-400' : 'text-red-400'}">
-                ${c.price_change_percentage_24h.toFixed(2)}%
-              </td>
-            </tr>`;
-          cryptoTable.innerHTML += row;
-        });
-
-        totalBalance.textContent = `$${total.toLocaleString()}`;
-        totalCoins.textContent = data.length;
-        bestCoin.textContent = topCoin.name;
-
-        // رسم بياني للأسعار
-        const ctx = document.getElementById("marketChart");
-        new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: data.map(c => c.symbol.toUpperCase()),
-            datasets: [{
-              label: 'السعر الحالي (USD)',
-              data: data.map(c => c.current_price),
-              borderColor: 'rgb(250,204,21)',
-              backgroundColor: 'rgba(250,204,21,0.2)',
-              fill: true,
-              tension: 0.4
-            }]
-          },
-          options: {
-            plugins: { legend: { labels: { color: 'white' } } },
-            scales: {
-              x: { ticks: { color: '#aaa' } },
-              y: { ticks: { color: '#aaa' } }
-            }
-          }
-        });
-      } catch (error) {
-        cryptoTable.innerHTML = `<tr><td colspan="3" class="text-red-500 py-4">فشل في جلب البيانات</td></tr>`;
-      }
-    }
-
-    loadCryptoData();
-  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
