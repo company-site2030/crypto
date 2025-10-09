@@ -1,44 +1,49 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>لوحة التحكم - كربتو الخليج</title>
   <script type="module" src="js/dashboard.js"></script>
-  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link
+    href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+    rel="stylesheet"
+  />
 </head>
 <body class="bg-gray-50 min-h-screen">
 
-  <!-- الشريط العلوي -->
+  <!-- شريط علوي -->
   <nav class="bg-blue-700 text-white px-6 py-3 flex justify-between items-center shadow-md">
-    <h1 class="text-xl font-bold">كربتو الخليج 💰</h1>
-    <div class="flex items-center space-x-4">
+    <h1 class="text-xl font-bold">💰 كربتو الخليج</h1>
+    <div class="flex items-center gap-4">
       <span id="userName" class="font-semibold"></span>
+      <a href="settings.html" class="bg-yellow-400 text-black px-3 py-1 rounded-lg hover:bg-yellow-500 transition">⚙️ الإعدادات</a>
       <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 px-4 py-1 rounded-lg">تسجيل الخروج</button>
     </div>
   </nav>
 
   <!-- المحتوى -->
   <div class="max-w-5xl mx-auto mt-8 p-6 bg-white rounded-2xl shadow-lg">
-
-    <h2 class="text-2xl font-bold mb-6 text-center">لوحة تداول العملات الرقمية</h2>
+    <h2 class="text-2xl font-bold mb-6 text-center text-blue-700">لوحة تداول العملات الرقمية</h2>
 
     <!-- جدول العملات -->
-    <table class="w-full border text-center">
-      <thead class="bg-gray-100">
-        <tr>
-          <th class="p-3 border">العملة</th>
-          <th class="p-3 border">السعر (USD)</th>
-          <th class="p-3 border">التغير 24 ساعة</th>
-          <th class="p-3 border">القيمة السوقية</th>
-        </tr>
-      </thead>
-      <tbody id="cryptoTable"></tbody>
-    </table>
+    <div class="overflow-x-auto">
+      <table class="w-full border text-center rounded-lg overflow-hidden">
+        <thead class="bg-gray-100">
+          <tr>
+            <th class="p-3 border">العملة</th>
+            <th class="p-3 border">السعر (USD)</th>
+            <th class="p-3 border">التغير (24 س)</th>
+            <th class="p-3 border">القيمة السوقية</th>
+          </tr>
+        </thead>
+        <tbody id="cryptoTable"></tbody>
+      </table>
+    </div>
 
     <!-- رسم بياني -->
     <div class="mt-10">
-      <h3 class="text-lg font-semibold mb-3">سعر البيتكوين خلال الأيام الأخيرة</h3>
+      <h3 class="text-lg font-semibold mb-3 text-gray-700">📈 سعر البيتكوين خلال الأيام الأخيرة</h3>
       <canvas id="btcChart" width="400" height="150"></canvas>
     </div>
   </div>
