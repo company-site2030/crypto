@@ -16,7 +16,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// مراقبة حالة تسجيل الدخول
+// مراقبة حالة المستخدم
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "login.html";
@@ -35,10 +35,12 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
   window.location.href = "login.html";
 });
 
-// جلب بيانات العملات من CoinGecko
+// جلب بيانات العملات من CoinGecko API
 async function loadCryptoData() {
   try {
-    const res = await fetch("https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,binancecoin,solana,cardano&sparkline=false");
+    const res = await fetch(
+      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=bitcoin,ethereum,binancecoin,solana,cardano&sparkline=false"
+    );
     const data = await res.json();
     const table = document.getElementById("cryptoTable");
     table.innerHTML = "";
@@ -46,7 +48,7 @@ async function loadCryptoData() {
     data.forEach((coin) => {
       const changeColor = coin.price_change_percentage_24h >= 0 ? "text-green-600" : "text-red-600";
       const row = `
-        <tr>
+        <tr class="hover:bg-gray-50 transition">
           <td class="border p-2 font-semibold">${coin.name} (${coin.symbol.toUpperCase()})</td>
           <td class="border p-2">$${coin.current_price.toLocaleString()}</td>
           <td class="border p-2 ${changeColor}">${coin.price_change_percentage_24h.toFixed(2)}%</td>
@@ -56,40 +58,43 @@ async function loadCryptoData() {
       table.innerHTML += row;
     });
   } catch (err) {
-    console.error("Error fetching crypto data:", err);
+    console.error("حدث خطأ في جلب البيانات:", err);
   }
 }
 
-// رسم بياني لسعر البيتكوين
+// رسم بياني لسعر البيتكوين خلال 7 أيام
 async function drawBTCChart() {
   try {
-    const res = await fetch("https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7");
+    const res = await fetch(
+      "https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=7"
+    );
     const data = await res.json();
     const prices = data.prices.map((p) => p[1]);
-    const labels = data.prices.map((p, i) => `يوم ${i + 1}`);
+    const labels = data.prices.map((_, i) => `اليوم ${i + 1}`);
 
     const ctx = document.getElementById("btcChart").getContext("2d");
     new Chart(ctx, {
       type: "line",
       data: {
         labels,
-        datasets: [{
-          label: "سعر BTC (دولار)",
-          data: prices,
-          borderWidth: 2,
-          borderColor: "#2563eb",
-          fill: false,
-        }],
+        datasets: [
+          {
+            label: "سعر BTC (دولار)",
+            data: prices,
+            borderWidth: 2,
+            borderColor: "#2563eb",
+            fill: false,
+            tension: 0.3,
+          },
+        ],
       },
       options: {
         responsive: true,
-        plugins: {
-          legend: { display: false },
-        },
+        plugins: { legend: { display: false } },
       },
     });
   } catch (err) {
-    console.error("Error loading BTC chart:", err);
+    console.error("حدث خطأ في تحميل الرسم البياني:", err);
   }
 }
 
