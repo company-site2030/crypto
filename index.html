@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>كربتو الخليج | الصفحة الرئيسية</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="./assets/logo.svg" />
+</head>
+<body class="bg-gray-950 text-white flex items-center justify-center min-h-screen">
+  <div class="text-center">
+    <img src="./assets/logo.svg" alt="شعار كربتو الخليج" class="w-24 mx-auto mb-6">
+    <h1 class="text-3xl font-bold mb-4 text-yellow-400">كربتو الخليج</h1>
+    <p class="mb-8 text-gray-300">منصتك الذكية لمتابعة تداول العملات الرقمية</p>
+    <a href="login.html" class="bg-yellow-500 hover:bg-yellow-600 text-black px-6 py-3 rounded-xl font-bold">ابدأ الآن</a>
+  </div>
+
+  <script type="module">
+    import { auth } from './js/firebase-config.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        window.location.href = "dashboard.html";
+      }
+    });
+  </script>
+</body>
+</html>
