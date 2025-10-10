@@ -1,81 +1,79 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>لوحة التحكم - كربتو الخليج 💰</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
   <script type="module" src="js/dashboard.js"></script>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-  <nav class="bg-blue-700 text-white px-6 py-3 flex justify-between items-center shadow-md">
-    <h1 class="text-xl font-bold">كربتو الخليج 💰</h1>
-    <div class="flex gap-2">
-  <a href="settings.html" class="bg-yellow-500 hover:bg-yellow-600 px-4 py-1 rounded-lg">الإعدادات ⚙️</a>
-  <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 px-4 py-1 rounded-lg">تسجيل الخروج</button>
-</div>
-
-
-  <main class="flex-1 p-6">
-    <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6">
-
-      <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">لوحة التحكم</h2>
-
-      <!-- معلومات المستخدم -->
-      <div id="userInfo" class="bg-gray-50 border rounded-xl p-4 mb-6 text-center">
-        <h3 class="font-semibold text-lg mb-2">👤 معلومات الحساب</h3>
-        <p><strong>الاسم الكامل:</strong> <span id="uName">-</span></p>
-        <p><strong>رقم الهاتف:</strong> <span id="uPhone">-</span></p>
-        <p><strong>البريد الإلكتروني:</strong> <span id="uEmail">-</span></p>
-        <p><strong>رقم المحفظة:</strong> <span id="walletId">-</span></p>
-      </div>
-
-      <!-- الرصيد -->
-      <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 text-center">
-        <h3 class="text-lg font-semibold mb-2">الرصيد الحالي</h3>
-        <p id="balance" class="text-3xl font-bold text-green-600">0 USDT</p>
-      </div>
-
-      <!-- الإيداع والسحب -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-
-        <!-- إيداع -->
-        <div class="bg-gray-50 border p-4 rounded-xl text-center">
-          <h3 class="font-semibold mb-3">💵 Deposit (USDT)</h3>
-          <img src="assets/usdt_qr.png" alt="USDT QR Code" class="w-40 mx-auto mb-2">
-          <p class="text-sm text-gray-600 break-all mb-2">
-            0x7F8125C197B845E1F0682A9846B94A11cA9d9743
-          </p>
-          <button id="copyAddress" class="bg-blue-600 text-white px-4 py-1 rounded mb-3 hover:bg-blue-700">📋 نسخ العنوان</button>
-          <p class="text-xs text-red-600 mb-3">
-            Only send Tether (ERC20) assets to this address.<br>
-            Other assets will be lost forever.
-          </p>
-          <input id="depositAmount" type="number" placeholder="المبلغ USDT" class="w-full border rounded p-2 mb-2">
-          <button id="depositBtn" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded">إرسال طلب إيداع</button>
-        </div>
-
-        <!-- سحب -->
-        <div class="bg-gray-50 border p-4 rounded-xl text-center">
-          <h3 class="font-semibold mb-3">💸 Withdraw (USDT)</h3>
-          <input id="withdrawAmount" type="number" placeholder="المبلغ USDT" class="w-full border rounded p-2 mb-2">
-          <input id="withdrawAddress" type="text" placeholder="عنوان محفظتك" class="w-full border rounded p-2 mb-2">
-          <button id="withdrawBtn" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded">إرسال طلب سحب</button>
-        </div>
-      </div>
-
-      <!-- سجل العمليات -->
-      <div>
-        <h3 class="text-lg font-semibold mb-3 text-center">📜 آخر العمليات</h3>
-        <div id="transactionsList" class="space-y-2 max-h-64 overflow-y-auto"></div>
-      </div>
-
+  <!-- الشريط العلوي -->
+  <nav class="bg-blue-700 text-white flex justify-between items-center px-4 py-3 shadow-md">
+    <div class="flex items-center gap-2">
+      <img src="assets/logo.png" alt="الشعار" class="w-10 h-10 rounded-full">
+      <h1 class="text-lg font-bold">كربتو الخليج 💰</h1>
     </div>
+    <div class="flex gap-2">
+      <a href="settings.html" class="bg-yellow-500 hover:bg-yellow-600 px-3 py-1 rounded-lg text-sm">⚙️ الإعدادات</a>
+      <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded-lg text-sm">تسجيل الخروج</button>
+    </div>
+  </nav>
+
+  <!-- المحتوى الرئيسي -->
+  <main class="flex-1 p-4 sm:p-6">
+
+    <!-- معلومات العميل -->
+    <div class="bg-white shadow-md rounded-2xl p-4 mb-6 text-center">
+      <h2 class="text-xl font-bold text-blue-700 mb-2">معلومات الحساب 👤</h2>
+      <p id="userName" class="text-gray-700"></p>
+      <p id="userPhone" class="text-gray-700"></p>
+      <p id="userEmail" class="text-gray-700"></p>
+      <p id="walletId" class="text-gray-700 font-bold mt-2"></p>
+    </div>
+
+    <!-- الرصيد -->
+    <div class="bg-green-100 border border-green-300 rounded-2xl p-4 mb-6 text-center shadow-sm">
+      <h2 class="text-xl font-bold text-green-700 mb-2">💰 الرصيد الحالي</h2>
+      <p id="balance" class="text-3xl font-extrabold text-green-800">0 USDT</p>
+    </div>
+
+    <!-- قسم الإيداع -->
+    <div class="bg-white shadow-lg rounded-2xl p-4 mb-6">
+      <h2 class="text-xl font-bold text-blue-700 mb-3">إيداع USDT (ERC20) 💵</h2>
+
+      <div class="flex flex-col items-center">
+        <img src="assets/usdt_qr.png" alt="USDT QR" class="w-40 mb-3 border rounded-lg shadow-sm">
+        <p class="text-gray-700 text-sm break-all mb-2">0x7F8125C197B845E1F0682A9846B94A11cA9d9743</p>
+        <button id="copyAddress" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-lg text-sm mb-3">📋 نسخ العنوان</button>
+        <p class="text-xs text-gray-500 text-center mb-3">
+          Only send <b>Tether (ERC20)</b> assets to this address.<br>
+          Other assets will be lost forever.
+        </p>
+      </div>
+
+      <div class="mt-3 text-center">
+        <input id="depositAmount" type="number" placeholder="أدخل المبلغ" class="border p-2 rounded-lg w-40 text-center mb-2">
+        <button id="depositBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-1 rounded-lg">تأكيد الإيداع</button>
+      </div>
+    </div>
+
+    <!-- قسم السحب -->
+    <div class="bg-white shadow-lg rounded-2xl p-4 mb-6">
+      <h2 class="text-xl font-bold text-blue-700 mb-3">سحب USDT 💸</h2>
+      <div class="flex flex-col gap-2">
+        <input id="withdrawAmount" type="number" placeholder="أدخل المبلغ" class="border p-2 rounded-lg w-full">
+        <input id="withdrawAddress" type="text" placeholder="أدخل عنوان محفظتك" class="border p-2 rounded-lg w-full">
+        <button id="withdrawBtn" class="bg-blue-700 hover:bg-blue-800 text-white py-2 rounded-lg mt-2">تأكيد السحب</button>
+      </div>
+    </div>
+
   </main>
 
-  <footer class="text-center py-6 text-gray-500 mt-10">
+  <footer class="text-center py-4 text-gray-500 bg-gray-50 border-t">
     © 2025 كربتو الخليج - جميع الحقوق محفوظة
   </footer>
+
 </body>
 </html>
