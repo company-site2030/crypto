@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, collection, addDoc, onSnapshot, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, addDoc, collection, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDcFemOaKgEJWruUmBukhxI_S7YJMvV9Rc",
@@ -17,32 +17,46 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUserId = null;
+let userData = null;
 
-// التحقق من المستخدم المسجل
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "login.html";
   } else {
     currentUserId = user.uid;
+    await loadUserInfo();
     await loadBalance();
     listenToTransactions();
   }
 });
 
-// تحميل الرصيد الحالي
+async function loadUserInfo() {
+  const userRef = doc(db, "users", currentUserId);
+  const userSnap = await getDoc(userRef);
+  if (userSnap.exists()) {
+    userData = userSnap.data();
+    document.getElementById("uName").textContent = userData.fullName;
+    document.getElementById("uPhone").textContent = userData.phone;
+    document.getElementById("uEmail").textContent = userData.email;
+    document.getElementById("walletId").textContent = userData.walletId;
+  }
+}
+
 async function loadBalance() {
   const userRef = doc(db, "users", currentUserId);
   const userSnap = await getDoc(userRef);
-  let balance = 0;
   if (userSnap.exists()) {
-    balance = userSnap.data().balance || 0;
-  } else {
-    await setDoc(userRef, { balance: 0 });
+    const balance = userSnap.data().balance || 0;
+    document.getElementById("balance").textContent = `${balance} USDT`;
   }
-  document.getElementById("balance").textContent = `${balance} USDT`;
 }
 
-// إرسال طلب إيداع
+document.getElementById("copyAddress").addEventListener("click", () => {
+  const address = "0x7F8125C197B845E1F0682A9846B94A11cA9d9743";
+  navigator.clipboard.writeText(address);
+  alert("تم نسخ العنوان ✅");
+});
+
 document.getElementById("depositBtn").addEventListener("click", async () => {
   const amount = parseFloat(document.getElementById("depositAmount").value);
   if (!amount || amount <= 0) {
@@ -59,14 +73,15 @@ document.getElementById("depositBtn").addEventListener("click", async () => {
   });
 
   document.getElementById("depositAmount").value = "";
-  alert("تم إرسال طلب الإيداع بنجاح ✅ بانتظار الموافقة");
+  alert("تم إرسال طلب الإيداع بنجاح ✅");
 });
 
-// إرسال طلب سحب
 document.getElementById("withdrawBtn").addEventListener("click", async () => {
   const amount = parseFloat(document.getElementById("withdrawAmount").value);
-  if (!amount || amount <= 0) {
-    alert("يرجى إدخال مبلغ صالح للسحب");
+  const address = document.getElementById("withdrawAddress").value.trim();
+
+  if (!amount || amount <= 0 || !address) {
+    alert("يرجى إدخال مبلغ وعنوان المحفظة");
     return;
   }
 
@@ -74,15 +89,16 @@ document.getElementById("withdrawBtn").addEventListener("click", async () => {
     userId: currentUserId,
     type: "withdraw",
     amount,
+    walletAddress: address,
     status: "pending",
     createdAt: serverTimestamp()
   });
 
   document.getElementById("withdrawAmount").value = "";
-  alert("تم إرسال طلب السحب بنجاح ✅ بانتظار الموافقة");
+  document.getElementById("withdrawAddress").value = "";
+  alert("تم إرسال طلب السحب بنجاح ✅");
 });
 
-// عرض سجل العمليات
 function listenToTransactions() {
   const transactionsRef = collection(db, "transactions");
   onSnapshot(transactionsRef, (snapshot) => {
@@ -100,9 +116,11 @@ function listenToTransactions() {
             ? "text-red-700"
             : "text-yellow-600";
 
+        const walletText = data.walletAddress ? `<br><span class="text-xs text-gray-500">${data.walletAddress}</span>` : "";
+
         const item = `
           <div class="border p-2 rounded flex justify-between items-center">
-            <span class="${color}">${data.type === "deposit" ? "إيداع" : "سحب"}: ${data.amount} USDT</span>
+            <span class="${color}">${data.type}: ${data.amount} USDT${walletText}</span>
             <span class="${statusColor} text-sm">${data.status}</span>
           </div>
         `;
@@ -112,7 +130,6 @@ function listenToTransactions() {
   });
 }
 
-// تسجيل الخروج
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "login.html";
