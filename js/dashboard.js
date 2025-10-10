@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, addDoc, collection, serverTimestamp, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDcFemOaKgEJWruUmBukhxI_S7YJMvV9Rc",
@@ -17,78 +17,65 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUserId = null;
-let userData = null;
 
+// التحقق من تسجيل الدخول
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "login.html";
   } else {
     currentUserId = user.uid;
-    await loadUserInfo();
-    await loadBalance();
-    listenToTransactions();
+    loadUserData();
   }
 });
 
-async function loadUserInfo() {
+async function loadUserData() {
   const userRef = doc(db, "users", currentUserId);
   const userSnap = await getDoc(userRef);
+
   if (userSnap.exists()) {
-    userData = userSnap.data();
-    document.getElementById("uName").textContent = userData.fullName;
-    document.getElementById("uPhone").textContent = userData.phone;
-    document.getElementById("uEmail").textContent = userData.email;
-    document.getElementById("walletId").textContent = userData.walletId;
+    const data = userSnap.data();
+    document.getElementById("userName").textContent = `👤 الاسم: ${data.fullName}`;
+    document.getElementById("userPhone").textContent = `📞 الهاتف: ${data.phone}`;
+    document.getElementById("userEmail").textContent = `📧 ${data.email}`;
+    document.getElementById("walletId").textContent = `🪪 رقم المحفظة: ${data.walletId || "—"}`;
+    document.getElementById("balance").textContent = `${data.balance || 0} USDT`;
   }
 }
 
-async function loadBalance() {
-  const userRef = doc(db, "users", currentUserId);
-  const userSnap = await getDoc(userRef);
-  if (userSnap.exists()) {
-    const balance = userSnap.data().balance || 0;
-    document.getElementById("balance").textContent = `${balance} USDT`;
-  }
-}
-
+// زر نسخ العنوان
 document.getElementById("copyAddress").addEventListener("click", () => {
-  const address = "0x7F8125C197B845E1F0682A9846B94A11cA9d9743";
-  navigator.clipboard.writeText(address);
-  alert("تم نسخ العنوان ✅");
+  navigator.clipboard.writeText("0x7F8125C197B845E1F0682A9846B94A11cA9d9743");
+  alert("📋 تم نسخ عنوان الإيداع");
 });
 
+// تسجيل عملية إيداع
 document.getElementById("depositBtn").addEventListener("click", async () => {
   const amount = parseFloat(document.getElementById("depositAmount").value);
-  if (!amount || amount <= 0) {
-    alert("يرجى إدخال مبلغ صالح للإيداع");
-    return;
-  }
+  if (!amount || amount <= 0) return alert("❌ أدخل مبلغ صحيح");
 
   await addDoc(collection(db, "transactions"), {
     userId: currentUserId,
     type: "deposit",
-    amount,
+    amount: amount,
     status: "pending",
     createdAt: serverTimestamp()
   });
 
   document.getElementById("depositAmount").value = "";
-  alert("تم إرسال طلب الإيداع بنجاح ✅");
+  alert("✅ تم تسجيل طلب الإيداع بنجاح");
 });
 
+// تسجيل عملية سحب
 document.getElementById("withdrawBtn").addEventListener("click", async () => {
   const amount = parseFloat(document.getElementById("withdrawAmount").value);
   const address = document.getElementById("withdrawAddress").value.trim();
 
-  if (!amount || amount <= 0 || !address) {
-    alert("يرجى إدخال مبلغ وعنوان المحفظة");
-    return;
-  }
+  if (!amount || amount <= 0 || !address) return alert("❌ أدخل المبلغ والعنوان بشكل صحيح");
 
   await addDoc(collection(db, "transactions"), {
     userId: currentUserId,
     type: "withdraw",
-    amount,
+    amount: amount,
     walletAddress: address,
     status: "pending",
     createdAt: serverTimestamp()
@@ -96,40 +83,10 @@ document.getElementById("withdrawBtn").addEventListener("click", async () => {
 
   document.getElementById("withdrawAmount").value = "";
   document.getElementById("withdrawAddress").value = "";
-  alert("تم إرسال طلب السحب بنجاح ✅");
+  alert("✅ تم إرسال طلب السحب بنجاح");
 });
 
-function listenToTransactions() {
-  const transactionsRef = collection(db, "transactions");
-  onSnapshot(transactionsRef, (snapshot) => {
-    const list = document.getElementById("transactionsList");
-    list.innerHTML = "";
-
-    snapshot.forEach((docSnap) => {
-      const data = docSnap.data();
-      if (data.userId === currentUserId) {
-        const color = data.type === "deposit" ? "text-green-600" : "text-red-600";
-        const statusColor =
-          data.status === "approved"
-            ? "text-green-700"
-            : data.status === "rejected"
-            ? "text-red-700"
-            : "text-yellow-600";
-
-        const walletText = data.walletAddress ? `<br><span class="text-xs text-gray-500">${data.walletAddress}</span>` : "";
-
-        const item = `
-          <div class="border p-2 rounded flex justify-between items-center">
-            <span class="${color}">${data.type}: ${data.amount} USDT${walletText}</span>
-            <span class="${statusColor} text-sm">${data.status}</span>
-          </div>
-        `;
-        list.innerHTML += item;
-      }
-    });
-  });
-}
-
+// تسجيل الخروج
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "login.html";
