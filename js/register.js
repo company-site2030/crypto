@@ -16,13 +16,17 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+function generateWalletId() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
 document.getElementById("registerBtn").addEventListener("click", async () => {
   const fullName = document.getElementById("fullName").value.trim();
-  const phoneNumber = document.getElementById("phoneNumber").value.trim();
+  const phone = document.getElementById("phone").value.trim();
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value.trim();
 
-  if (!fullName || !phoneNumber || !email || !password) {
+  if (!fullName || !phone || !email || !password) {
     alert("يرجى تعبئة جميع الحقول");
     return;
   }
@@ -31,24 +35,20 @@ document.getElementById("registerBtn").addEventListener("click", async () => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // حفظ بيانات المستخدم في Firestore
+    const walletId = generateWalletId();
+
     await setDoc(doc(db, "users", user.uid), {
       fullName,
-      phoneNumber,
+      phone,
       email,
-      createdAt: new Date().toISOString()
+      walletId,
+      balance: 0,
+      createdAt: new Date()
     });
 
-    alert("تم إنشاء الحساب بنجاح 🎉");
-    // تفريغ الحقول بعد التسجيل
-    document.getElementById("fullName").value = "";
-    document.getElementById("phoneNumber").value = "";
-    document.getElementById("email").value = "";
-    document.getElementById("password").value = "";
-
-    // تحويل المستخدم إلى صفحة الدخول
-    window.location.href = "login.html";
+    alert("تم التسجيل بنجاح ✅");
+    window.location.href = "dashboard.html";
   } catch (error) {
-    alert("حدث خطأ: " + error.message);
+    alert("حدث خطأ أثناء التسجيل: " + error.message);
   }
 });
