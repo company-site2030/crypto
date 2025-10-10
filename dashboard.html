@@ -9,19 +9,24 @@
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
 
-  <!-- شريط علوي -->
   <nav class="bg-blue-700 text-white px-6 py-3 flex justify-between items-center shadow-md">
     <h1 class="text-xl font-bold">كربتو الخليج 💰</h1>
-    <div class="flex items-center gap-3">
-      <a href="settings.html" class="bg-gray-200 text-blue-700 px-3 py-1 rounded-lg hover:bg-gray-300">⚙️ الإعدادات</a>
-      <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 px-4 py-1 rounded-lg">تسجيل الخروج</button>
-    </div>
+    <button id="logoutBtn" class="bg-red-500 hover:bg-red-600 px-4 py-1 rounded-lg">تسجيل الخروج</button>
   </nav>
 
-  <!-- المحتوى -->
   <main class="flex-1 p-6">
     <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6">
+
       <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">لوحة التحكم</h2>
+
+      <!-- معلومات المستخدم -->
+      <div id="userInfo" class="bg-gray-50 border rounded-xl p-4 mb-6 text-center">
+        <h3 class="font-semibold text-lg mb-2">👤 معلومات الحساب</h3>
+        <p><strong>الاسم الكامل:</strong> <span id="uName">-</span></p>
+        <p><strong>رقم الهاتف:</strong> <span id="uPhone">-</span></p>
+        <p><strong>البريد الإلكتروني:</strong> <span id="uEmail">-</span></p>
+        <p><strong>رقم المحفظة:</strong> <span id="walletId">-</span></p>
+      </div>
 
       <!-- الرصيد -->
       <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6 text-center">
@@ -29,18 +34,31 @@
         <p id="balance" class="text-3xl font-bold text-green-600">0 USDT</p>
       </div>
 
-      <!-- عمليات مالية -->
+      <!-- الإيداع والسحب -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-        <div class="bg-gray-50 border p-4 rounded-xl">
-          <h3 class="font-semibold mb-2 text-center">💵 إيداع</h3>
-          <input id="depositAmount" type="number" placeholder="المبلغ بالإيـسـدي تي" class="w-full border rounded p-2 mb-2">
-          <button id="depositBtn" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded">طلب إيداع</button>
+
+        <!-- إيداع -->
+        <div class="bg-gray-50 border p-4 rounded-xl text-center">
+          <h3 class="font-semibold mb-3">💵 Deposit (USDT)</h3>
+          <img src="assets/usdt_qr.png" alt="USDT QR Code" class="w-40 mx-auto mb-2">
+          <p class="text-sm text-gray-600 break-all mb-2">
+            0x7F8125C197B845E1F0682A9846B94A11cA9d9743
+          </p>
+          <button id="copyAddress" class="bg-blue-600 text-white px-4 py-1 rounded mb-3 hover:bg-blue-700">📋 نسخ العنوان</button>
+          <p class="text-xs text-red-600 mb-3">
+            Only send Tether (ERC20) assets to this address.<br>
+            Other assets will be lost forever.
+          </p>
+          <input id="depositAmount" type="number" placeholder="المبلغ USDT" class="w-full border rounded p-2 mb-2">
+          <button id="depositBtn" class="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded">إرسال طلب إيداع</button>
         </div>
 
-        <div class="bg-gray-50 border p-4 rounded-xl">
-          <h3 class="font-semibold mb-2 text-center">💸 سحب</h3>
-          <input id="withdrawAmount" type="number" placeholder="المبلغ بالإيـسـدي تي" class="w-full border rounded p-2 mb-2">
-          <button id="withdrawBtn" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded">طلب سحب</button>
+        <!-- سحب -->
+        <div class="bg-gray-50 border p-4 rounded-xl text-center">
+          <h3 class="font-semibold mb-3">💸 Withdraw (USDT)</h3>
+          <input id="withdrawAmount" type="number" placeholder="المبلغ USDT" class="w-full border rounded p-2 mb-2">
+          <input id="withdrawAddress" type="text" placeholder="عنوان محفظتك" class="w-full border rounded p-2 mb-2">
+          <button id="withdrawBtn" class="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded">إرسال طلب سحب</button>
         </div>
       </div>
 
@@ -49,6 +67,7 @@
         <h3 class="text-lg font-semibold mb-3 text-center">📜 آخر العمليات</h3>
         <div id="transactionsList" class="space-y-2 max-h-64 overflow-y-auto"></div>
       </div>
+
     </div>
   </main>
 
