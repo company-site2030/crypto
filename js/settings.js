@@ -18,49 +18,44 @@ const db = getFirestore(app);
 
 let currentUserId = null;
 
-// التحقق من المستخدم المسجل
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "login.html";
   } else {
     currentUserId = user.uid;
-    const userRef = doc(db, "users", currentUserId);
-    const userSnap = await getDoc(userRef);
-    if (userSnap.exists()) {
-      document.getElementById("fullName").value = userSnap.data().fullName || "";
-      document.getElementById("phoneNumber").value = userSnap.data().phoneNumber || "";
-    }
+    loadUserData();
   }
 });
 
-// زر حفظ التعديلات
-document.getElementById("saveBtn").addEventListener("click", async () => {
-  const fullName = document.getElementById("fullName").value.trim();
-  const phoneNumber = document.getElementById("phoneNumber").value.trim();
+async function loadUserData() {
+  const userRef = doc(db, "users", currentUserId);
+  const snap = await getDoc(userRef);
+  if (snap.exists()) {
+    const data = snap.data();
+    document.getElementById("fullName").value = data.fullName || "";
+    document.getElementById("phone").value = data.phone || "";
+  }
+}
 
-  if (!fullName || !phoneNumber) {
+document.getElementById("saveBtn").addEventListener("click", async () => {
+  const newName = document.getElementById("fullName").value.trim();
+  const newPhone = document.getElementById("phone").value.trim();
+
+  if (!newName || !newPhone) {
     alert("يرجى تعبئة جميع الحقول");
     return;
   }
 
-  try {
-    await updateDoc(doc(db, "users", currentUserId), {
-      fullName,
-      phoneNumber
-    });
+  const userRef = doc(db, "users", currentUserId);
+  await updateDoc(userRef, {
+    fullName: newName,
+    phone: newPhone
+  });
 
-    alert("تم حفظ التغييرات بنجاح ✅");
-  } catch (error) {
-    alert("حدث خطأ أثناء التحديث: " + error.message);
-  }
-});
-
-// زر العودة إلى الداشبورد
-document.getElementById("backBtn").addEventListener("click", () => {
+  alert("✅ تم تحديث البيانات بنجاح");
   window.location.href = "dashboard.html";
 });
 
-// زر تسجيل الخروج
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "login.html";
