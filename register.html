@@ -1,24 +1,28 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>تسجيل - كربتو الخليج</title>
-  <script type="module" src="js/register.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>إنشاء حساب - كربتو الخليج 💰</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <script type="module" src="js/register.js"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
-  <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
-    <h1 class="text-2xl font-bold text-center mb-6">إنشاء حساب جديد</h1>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
 
-    <input id="fullName" type="text" placeholder="الاسم الكامل" class="w-full p-2 mb-3 border rounded">
-    <input id="phoneNumber" type="text" placeholder="رقم الهاتف" class="w-full p-2 mb-3 border rounded">
-    <input id="email" type="email" placeholder="البريد الإلكتروني" class="w-full p-2 mb-3 border rounded">
-    <input id="password" type="password" placeholder="كلمة المرور" class="w-full p-2 mb-5 border rounded">
+  <div class="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
+    <h1 class="text-2xl font-bold text-center text-blue-700 mb-6">إنشاء حساب جديد</h1>
 
-    <button id="registerBtn" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">تسجيل</button>
+    <input id="fullName" type="text" placeholder="الاسم الكامل" class="w-full border rounded p-2 mb-3">
+    <input id="phone" type="text" placeholder="رقم الهاتف" class="w-full border rounded p-2 mb-3">
+    <input id="email" type="email" placeholder="البريد الإلكتروني" class="w-full border rounded p-2 mb-3">
+    <input id="password" type="password" placeholder="كلمة المرور" class="w-full border rounded p-2 mb-4">
 
-    <p class="text-center mt-4">لديك حساب؟ <a href="login.html" class="text-blue-600">تسجيل الدخول</a></p>
+    <button id="registerBtn" class="w-full bg-blue-700 hover:bg-blue-800 text-white py-2 rounded">تسجيل</button>
+
+    <p class="text-center text-gray-600 mt-4">
+      لديك حساب بالفعل؟ <a href="login.html" class="text-blue-600 font-semibold hover:underline">تسجيل الدخول</a>
+    </p>
   </div>
+
 </body>
 </html>
