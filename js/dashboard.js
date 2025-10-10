@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
+import { getFirestore, doc, getDoc, updateDoc, collection, addDoc, arrayUnion, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDcFemOaKgEJWruUmBukhxI_S7YJMvV9Rc",
@@ -91,3 +91,109 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
   window.location.href = "login.html";
 });
+
+/* ---------------------- وظائف منصة التداول ---------------------- */
+
+// دالة للحصول على أسعار العملات (يمكن تطويرها لاحقًا لAPI خارجي)
+async function getAssetPrice(asset) {
+  const prices = { BTC: 30000, ETH: 2000, USDT: 1 };
+  return prices[asset] || 1;
+}
+
+// شراء عملة
+document.getElementById('buyBtn').addEventListener('click', async () => {
+  const asset = document.getElementById('tradeAsset').value;
+  const amount = parseFloat(document.getElementById('tradeAmount').value);
+  if (isNaN(amount) || amount <= 0) return alert('❌ أدخل كمية صحيحة');
+
+  const userRef = doc(db, "users", currentUserId);
+  const userSnap = await getDoc(userRef);
+  let balance = userSnap.data().balance || 0;
+
+  const price = await getAssetPrice(asset);
+  const totalCost = amount * price;
+
+  if (balance < totalCost) return alert('❌ الرصيد غير كافي');
+
+  balance -= totalCost;
+
+  await updateDoc(userRef, {
+    balance: balance,
+    trades: arrayUnion({
+      type: "buy",
+      asset: asset,
+      amount: amount,
+      price: price,
+      date: new Date().toLocaleString()
+    })
+  });
+
+  document.getElementById('tradeAmount').value = "";
+  updateBalanceUI(balance);
+  alert(`✅ تم شراء ${amount} ${asset} بنجاح`);
+});
+
+// بيع عملة
+document.getElementById('sellBtn').addEventListener('click', async () => {
+  const asset = document.getElementById('tradeAsset').value;
+  const amount = parseFloat(document.getElementById('tradeAmount').value);
+  if (isNaN(amount) || amount <= 0) return alert('❌ أدخل كمية صحيحة');
+
+  const userRef = doc(db, "users", currentUserId);
+  const userSnap = await getDoc(userRef);
+  let balance = userSnap.data().balance || 0;
+  let trades = userSnap.data().trades || [];
+
+  const owned = trades.filter(t => t.asset === asset && t.type === "buy").reduce((sum, t) => sum + t.amount, 0);
+  const sold = trades.filter(t => t.asset === asset && t.type === "sell").reduce((sum, t) => sum + t.amount, 0);
+  const available = owned - sold;
+
+  if (available < amount) return alert('❌ الكمية غير متوفرة للبيع');
+
+  const price = await getAssetPrice(asset);
+  const totalGain = amount * price;
+  balance += totalGain;
+
+  await updateDoc(userRef, {
+    balance: balance,
+    trades: arrayUnion({
+      type: "sell",
+      asset: asset,
+      amount: amount,
+      price: price,
+      date: new Date().toLocaleString()
+    })
+  });
+
+  document.getElementById('tradeAmount').value = "";
+  updateBalanceUI(balance);
+  alert(`✅ تم بيع ${amount} ${asset} بنجاح`);
+});
+
+// كشف الحساب لجميع العمليات
+document.getElementById('accountHistoryBtn').addEventListener('click', async () => {
+  const userRef = doc(db, "users", currentUserId);
+  const userSnap = await getDoc(userRef);
+  const trades = userSnap.data().trades || [];
+
+  const tbody = document.getElementById('tradeHistoryBody');
+  tbody.innerHTML = '';
+  trades.forEach(trade => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="p-2 border">${trade.date}</td>
+      <td class="p-2 border">${trade.type}</td>
+      <td class="p-2 border">${trade.asset}</td>
+      <td class="p-2 border">${trade.amount}</td>
+      <td class="p-2 border">${trade.price}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('tradeHistory').classList.remove('hidden');
+});
+
+// تحديث الرصيد في الواجهة
+function updateBalanceUI(balance) {
+  document.getElementById('balance').textContent = balance.toFixed(2) + ' USDT';
+}
