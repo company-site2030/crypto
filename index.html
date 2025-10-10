@@ -6,21 +6,58 @@
   <title>كربتو الخليج 💰</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center">
+<body class="bg-gradient-to-b from-blue-50 to-blue-100 min-h-screen flex flex-col">
 
-  <!-- شعار + اسم -->
-  <div class="text-center">
-    <img src="assets/logo.png" alt="شعار كربتو الخليج" class="w-28 mx-auto mb-4">
-    <h1 class="text-3xl font-bold text-blue-700 mb-2">كربتو الخليج</h1>
-    <p class="text-gray-600 mb-6">منصتك الذكية لتداول العملات الرقمية</p>
+  <!-- قسم المقدمة -->
+  <header class="flex flex-col items-center justify-center text-center py-16 px-4 bg-white shadow-md">
+    <img src="assets/logo.png" alt="كربتو الخليج" class="w-40 h-40 mb-6 object-contain cursor-pointer">
+    <h1 class="text-4xl sm:text-5xl font-extrabold text-blue-700 mb-4">كربتو الخليج 💰</h1>
+    <p class="text-gray-700 text-lg sm:text-xl mb-6 max-w-xl">
+      منصتك الذكية لتداول العملات الرقمية بأمان وسرعة فائقة. إيداعك وسحوباتك تحدث مباشرة، وتجربة التداول لدينا سلسة وفورية.
+    </p>
 
-    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <a href="login.html" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">تسجيل الدخول</a>
-      <a href="register.html" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition">إنشاء حساب جديد</a>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center mb-8">
+      <a href="login.html" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition font-semibold shadow-md">تسجيل الدخول</a>
+      <a href="register.html" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition font-semibold shadow-md">إنشاء حساب جديد</a>
     </div>
-  </div>
+  </header>
 
-  <footer class="text-center mt-10 text-gray-500">
+  <!-- قسم المزايا -->
+  <section class="py-16 px-4 text-center">
+    <h2 class="text-3xl font-bold text-blue-700 mb-10">لماذا تختار كربتو الخليج؟</h2>
+    <div class="grid sm:grid-cols-3 gap-8 max-w-5xl mx-auto">
+
+      <div class="bg-white shadow-lg rounded-2xl p-6 hover:shadow-xl transition">
+        <h3 class="text-xl font-bold text-green-600 mb-2">💸 تداول فوري</h3>
+        <p class="text-gray-600">شراء وبيع العملات الرقمية بسرعة وبسلاسة، بدون تأخير أو تعقيدات.</p>
+      </div>
+
+      <div class="bg-white shadow-lg rounded-2xl p-6 hover:shadow-xl transition">
+        <h3 class="text-xl font-bold text-green-600 mb-2">⚡ سحب وإيداع سريع</h3>
+        <p class="text-gray-600">إيداع الأموال وسحبها يتم مباشرة وبدون انتظار، لتجربة تداول آمنة وموثوقة.</p>
+      </div>
+
+      <div class="bg-white shadow-lg rounded-2xl p-6 hover:shadow-xl transition">
+        <h3 class="text-xl font-bold text-green-600 mb-2">🔒 أمان كامل</h3>
+        <p class="text-gray-600">حماية عالية لمحفظتك وبياناتك مع أفضل معايير الأمان في العالم الرقمي.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- قسم دعوة للتسجيل -->
+  <section class="bg-blue-50 py-16 px-4 text-center">
+    <h2 class="text-3xl font-bold text-blue-700 mb-6">ابدأ رحلتك مع كربتو الخليج اليوم!</h2>
+    <p class="text-gray-700 mb-8 max-w-lg mx-auto">
+      انضم الآن واستفد من منصة تداول سريعة، آمنة، وسهلة الاستخدام لجميع مستويات المتداولين.
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <a href="register.html" class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition font-semibold shadow-md">إنشاء حساب جديد</a>
+      <a href="login.html" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition font-semibold shadow-md">تسجيل الدخول</a>
+    </div>
+  </section>
+
+  <footer class="text-center py-6 text-gray-500 bg-white mt-auto">
     © 2025 كربتو الخليج - جميع الحقوق محفوظة
   </footer>
 
