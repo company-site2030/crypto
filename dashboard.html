@@ -27,6 +27,7 @@
       background: rgba(255,255,255,0.1);
       border-radius:12px;
       transition:.3s
+      cursor: pointer;
     }
 
     .btn-glass:hover {background: rgba(255,255,255,0.2)}
@@ -56,6 +57,7 @@
 
 <main class="flex-1 p-4 sm:p-6 max-w-6xl mx-auto w-full">
 
+<!-- معلومات المستخدم -->
 <div class="glass p-6 mb-6 text-center">
   <h2 class="text-yellow-400">معلومات الحساب 👤</h2>
   <p id="userName"></p>
@@ -64,36 +66,62 @@
   <p id="walletId"></p>
 </div>
 
+<!-- الرصيد -->
 <div class="glass p-6 mb-6 text-center">
   <h2 class="text-green-400">💰 الرصيد الحالي</h2>
   <p id="balance" class="text-3xl">0 USDT</p>
 </div>
 
-<!-- CHART LIVE -->
-<div class="glass p-6 mb-6 text-center">
-  <h2 class="text-yellow-400 mb-3">📊 السوق المباشر</h2>
-  <canvas id="chart"></canvas>
+<!-- أزرار الإيداع والسحب -->
+<div class="flex flex-col sm:flex-row gap-4 mb-6">
+  <button onclick="scrollToSection('depositSection')" class="btn-glass px-4 py-2 w-full sm:w-auto">💵 إيداع</button>
+  <button onclick="scrollToSection('withdrawSection')" class="btn-glass px-4 py-2 w-full sm:w-auto">💸 سحب</button>
 </div>
 
-<!-- نفس كودك بدون تغيير -->
-<div class="glass p-6 mb-6 text-center">
-  <h2 class="text-yellow-400">التداول 📈</h2>
-  <div class="flex flex-col gap-3">
+<!-- الإيداع -->
+<div id="depositSection" class="glass p-6 mb-6 text-center">
+  <h2 class="text-yellow-400 mb-3">إيداع USDT 💵</h2>
+  <div class="flex flex-col items-center">
+    <img src="assets/usdt_qr.png" class="w-40 mb-3 rounded-lg shadow-lg">
+    <p class="text-sm break-all mb-2">0x7F8125C197B845E1F0682A9846B94A11cA9d9743</p>
+    <button id="copyAddress" class="btn-glass px-3 py-1 mb-3">📋 نسخ العنوان</button>
+    <p class="text-xs text-gray-300 mb-3">Only send Tether (ERC20) assets</p>
+  </div>
+  <input id="depositAmount" type="number" placeholder="أدخل المبلغ" class="p-2 rounded-lg w-40 text-center mb-2">
+  <button id="depositBtn" class="bg-yellow-500 hover:bg-yellow-600 px-4 py-1 rounded-lg">تأكيد الإيداع</button>
+</div>
 
+<!-- السحب -->
+<div id="withdrawSection" class="glass p-6 mb-6 text-center">
+  <h2 class="text-yellow-400 mb-3">سحب USDT 💸</h2>
+  <div class="flex flex-col gap-2">
+    <input id="withdrawAmount" type="number" placeholder="أدخل المبلغ" class="p-2 rounded-lg">
+    <input id="withdrawAddress" type="text" placeholder="أدخل عنوان محفظتك" class="p-2 rounded-lg">
+    <button id="withdrawBtn" class="bg-yellow-500 hover:bg-yellow-600 py-2 rounded-lg mt-2">تأكيد السحب</button>
+  </div>
+</div>
+
+<!-- التداول -->
+<div class="glass p-6 mb-6 text-center">
+  <h2 class="text-yellow-400 mb-3">منصة التداول 📈</h2>
+  <div class="flex flex-col gap-3">
     <div class="flex flex-col sm:flex-row gap-2 items-center">
       <select id="tradeAsset" class="p-2 rounded-lg w-full sm:w-1/3">
         <option>BTC</option>
         <option>ETH</option>
         <option>USDT</option>
       </select>
-
       <input id="tradeAmount" type="number" placeholder="الكمية" class="p-2 rounded-lg w-full sm:w-1/3 text-center">
-
       <button id="buyBtn" class="bg-green-600 px-4 py-1 rounded-lg">شراء</button>
       <button id="sellBtn" class="bg-red-600 px-4 py-1 rounded-lg">بيع</button>
     </div>
-
   </div>
+</div>
+
+<!-- الرسم البياني -->
+<div class="glass p-6 mb-6 text-center">
+  <h2 class="text-yellow-400 mb-3">📊 السوق المباشر</h2>
+  <canvas id="chart"></canvas>
 </div>
 
 </main>
@@ -105,12 +133,10 @@
 function toggleMode(){document.getElementById('body').classList.toggle('light')}
 
 // 🔔 إشعارات
-function toast(msg){
- let t=document.getElementById('toast');
- t.innerText=msg;
- t.classList.remove('hidden');
- setTimeout(()=>t.classList.add('hidden'),2000)
-}
+function toast(msg){let t=document.getElementById('toast');t.innerText=msg;t.classList.remove('hidden');setTimeout(()=>t.classList.add('hidden'),2000)}
+
+// ⚡ التمرير للأقسام
+function scrollToSection(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
 
 // 📊 API سعر حقيقي (Binance)
 let prices=[];
@@ -127,16 +153,14 @@ async function loadPrice(){
 
 // 📊 رسم بياني
 const ctx=document.getElementById('chart');
-const chart=new Chart(ctx,{
- type:'line',
- data:{labels:[],datasets:[{label:'BTC',data:[]}]}
-});
+const chart=new Chart(ctx,{type:'line',data:{labels:[],datasets:[{label:'BTC',data:[]}]} });
 setInterval(loadPrice,2000);
 
-// 💰 حساب أرباح حقيقي
+// 💰 حساب أرباح فعلي
 let balance=1000;
 document.getElementById('balance').innerText=balance+' USDT';
 
+// شراء / بيع
 document.getElementById('buyBtn').onclick=()=>{
  let amt=parseFloat(document.getElementById('tradeAmount').value||0);
  balance-=amt;
@@ -150,7 +174,6 @@ document.getElementById('sellBtn').onclick=()=>{
  document.getElementById('balance').innerText=balance+' USDT';
  toast('تم البيع 💸');
 }
-
 </script>
 
 </body>
