@@ -12,29 +12,12 @@
     body {background: linear-gradient(135deg,#0f172a,#020617);transition:.3s}
     .light {background: linear-gradient(135deg,#e2e8f0,#cbd5f5);color:black}
 
-    .glass {
-      background: rgba(255,255,255,0.08);
-      backdrop-filter: blur(15px);
-      border-radius:20px;
-      border:1px solid rgba(255,255,255,0.15);
-      box-shadow:0 8px 32px rgba(0,0,0,0.4);
-      transition:.3s
-    }
-
+    .glass {background: rgba(255,255,255,0.08);backdrop-filter: blur(15px);border-radius:20px;border:1px solid rgba(255,255,255,0.15);box-shadow:0 8px 32px rgba(0,0,0,0.4);transition:.3s}
     .glass:hover {transform: translateY(-5px)}
-
-    .btn-glass {
-      background: rgba(255,255,255,0.1);
-      border-radius:12px;
-      transition:.3s
-      cursor: pointer;
-    }
-
+    .btn-glass {background: rgba(255,255,255,0.1);border-radius:12px;transition:.3s;cursor: pointer;}
     .btn-glass:hover {background: rgba(255,255,255,0.2)}
-
     input,select {background:rgba(255,255,255,0.15)!important;color:white!important}
     .light input,.light select{color:black!important}
-
     .fade {animation:fade .5s}
     @keyframes fade {from{opacity:0}to{opacity:1}}
   </style>
@@ -47,7 +30,6 @@
     <img src="assets/logo.png" class="w-10 h-10 rounded-full">
     <h1 class="font-bold">كربتو الخليج 💰</h1>
   </div>
-
   <div class="flex gap-2 items-center">
     <button onclick="toggleMode()" class="btn-glass px-3 py-1">🌙</button>
     <a href="settings.html" class="btn-glass px-3 py-1">⚙️</a>
@@ -74,12 +56,12 @@
 
 <!-- أزرار الإيداع والسحب -->
 <div class="flex flex-col sm:flex-row gap-4 mb-6">
-  <button onclick="scrollToSection('depositSection')" class="btn-glass px-4 py-2 w-full sm:w-auto">💵 إيداع</button>
-  <button onclick="scrollToSection('withdrawSection')" class="btn-glass px-4 py-2 w-full sm:w-auto">💸 سحب</button>
+  <button onclick="document.getElementById('depositSection').classList.toggle('hidden')" class="btn-glass px-4 py-2 w-full sm:w-auto">💵 إيداع</button>
+  <button onclick="document.getElementById('withdrawSection').classList.toggle('hidden')" class="btn-glass px-4 py-2 w-full sm:w-auto">💸 سحب</button>
 </div>
 
 <!-- الإيداع -->
-<div id="depositSection" class="glass p-6 mb-6 text-center">
+<div id="depositSection" class="glass p-6 mb-6 text-center hidden">
   <h2 class="text-yellow-400 mb-3">إيداع USDT 💵</h2>
   <div class="flex flex-col items-center">
     <img src="assets/usdt_qr.png" class="w-40 mb-3 rounded-lg shadow-lg">
@@ -92,7 +74,7 @@
 </div>
 
 <!-- السحب -->
-<div id="withdrawSection" class="glass p-6 mb-6 text-center">
+<div id="withdrawSection" class="glass p-6 mb-6 text-center hidden">
   <h2 class="text-yellow-400 mb-3">سحب USDT 💸</h2>
   <div class="flex flex-col gap-2">
     <input id="withdrawAmount" type="number" placeholder="أدخل المبلغ" class="p-2 rounded-lg">
@@ -129,16 +111,10 @@
 <div id="toast" class="fixed bottom-5 left-5 bg-green-500 px-4 py-2 rounded hidden"></div>
 
 <script>
-// 🌙 الوضع الليلي
 function toggleMode(){document.getElementById('body').classList.toggle('light')}
-
-// 🔔 إشعارات
 function toast(msg){let t=document.getElementById('toast');t.innerText=msg;t.classList.remove('hidden');setTimeout(()=>t.classList.add('hidden'),2000)}
-
-// ⚡ التمرير للأقسام
 function scrollToSection(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
 
-// 📊 API سعر حقيقي (Binance)
 let prices=[];
 async function loadPrice(){
  let res=await fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT');
@@ -150,30 +126,15 @@ async function loadPrice(){
  chart.data.datasets[0].data=prices;
  chart.update();
 }
-
-// 📊 رسم بياني
 const ctx=document.getElementById('chart');
 const chart=new Chart(ctx,{type:'line',data:{labels:[],datasets:[{label:'BTC',data:[]}]} });
 setInterval(loadPrice,2000);
 
-// 💰 حساب أرباح فعلي
 let balance=1000;
 document.getElementById('balance').innerText=balance+' USDT';
 
-// شراء / بيع
-document.getElementById('buyBtn').onclick=()=>{
- let amt=parseFloat(document.getElementById('tradeAmount').value||0);
- balance-=amt;
- document.getElementById('balance').innerText=balance+' USDT';
- toast('تم الشراء ✅');
-}
-
-document.getElementById('sellBtn').onclick=()=>{
- let amt=parseFloat(document.getElementById('tradeAmount').value||0);
- balance+=amt;
- document.getElementById('balance').innerText=balance+' USDT';
- toast('تم البيع 💸');
-}
+document.getElementById('buyBtn').onclick=()=>{let amt=parseFloat(document.getElementById('tradeAmount').value||0);balance-=amt;document.getElementById('balance').innerText=balance+' USDT';toast('تم الشراء ✅')}
+document.getElementById('sellBtn').onclick=()=>{let amt=parseFloat(document.getElementById('tradeAmount').value||0);balance+=amt;document.getElementById('balance').innerText=balance+' USDT';toast('تم البيع 💸')}
 </script>
 
 </body>
